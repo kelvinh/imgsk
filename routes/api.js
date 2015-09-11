@@ -8,6 +8,10 @@ router.get('/images', function(req, res, next) {
     storage.listImages(req, res, next);
 });
 
+router.get('/image/:name', function(req, res, next) {
+    storage.sendImage(req.params.name, res, next);
+});
+
 router.post('/upload', function(req, res, next) {
     storage.saveSingleImage(req, res, next);
 });
