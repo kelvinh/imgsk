@@ -1,7 +1,7 @@
-#+TITLE:     imgsk - a image hosting site
+#+TITLE:     imgsk - an image hosting site
 #+AUTHOR:    Kelvin Hu
 #+EMAIL:     ini.kelvin@gmail.com
 #+DATE:      2015-09-11
 
 
-A image hosting site.
+An image hosting site.
