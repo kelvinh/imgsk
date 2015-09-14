@@ -6,10 +6,25 @@ var httpLogger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var errorhandler = require('errorhandler');
+var session = require('express-session');
+var passport = require('passport');
+var auth = require('./lib/auth.js');
 var http = require('http');
 var log = require('./lib/logger');
 var web = require('./routes/index');
 var api = require('./routes/api');
+
+passport.serializeUser(function(user, done) {
+    log.debug('serializeUser: ', user);
+    // TODO complete the logic here
+    done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+    log.debug('deserializeUser: ', obj);
+    // TODO complete the logic here
+    done(null, obj);
+});
 
 var app = express();
 
@@ -19,6 +34,13 @@ if (config.debug) {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+    secret: config.sessionSecret,
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', web);
 app.use('/api', api);
