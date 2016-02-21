@@ -2,8 +2,16 @@
 
 var config = {
     debug: true,
-    port: 8080,
     logLevel: 'debug',
+
+    host: '0.0.0.0',
+    port: 8080,
+
+    connectTimeout: 5000, // 5 sec
+
+
+    // below fields are obsolete
+
     imageUploadDir: './uploads/',
     sessionSecret: 'sillykelvin',
 

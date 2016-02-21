@@ -1,0 +1,33 @@
+package mushroom;
+
+message MessageHeader {
+    optional uint32 msgId      = 1;
+    optional uint32 bodyLength = 2;
+    // TODO: add more
+}
+
+enum MessageId {
+    HeartbeatReq = 1;
+}
+
+message HeartbeatReq {
+}
+
+// enum msg_id {
+//     UPLOAD_IMAGE_REQ = 1;
+//     UPLOAD_IMAGE_RSP = 2;
+// }
+// 
+// message upload_image_req {
+//     optional string name  = 1;
+//     optional byte content = 2;
+// }
+// 
+// message upload_image_rsp {
+//     optional sint32 ret = 1;
+// }
+// 
+// message msg {
+//     optional msg_id msgid = 1;
+//     optional byte payload = 2;
+// }
