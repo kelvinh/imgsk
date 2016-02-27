@@ -19,6 +19,7 @@ var User = db.define('user', {
     },
     email: {
         type: sequelize.STRING,
+        unique: true,
         allowNull: false,
         field: 'email'
     },
