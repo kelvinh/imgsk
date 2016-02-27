@@ -20,6 +20,7 @@ message HeartbeatRsp {
 }
 
 message LoginReq {
+    optional string email = 1;
 }
 
 message LoginRsp {
