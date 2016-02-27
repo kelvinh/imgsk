@@ -45,6 +45,7 @@ function start() {
         console.log('CONNECTED: ' + host + ':' + port);
 
         var login = new root.LoginReq();
+        login.setEmail('i@a.com');
         var buf = encodeMessage(root.MessageId.LoginReq, login);
 
         client.write(buf);
