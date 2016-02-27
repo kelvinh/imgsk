@@ -2,6 +2,8 @@
 
 var config = {
     debug: true,
+
+    logName: 'logs/mushroom.log',
     logLevel: 'debug',
 
     host: '0.0.0.0',
@@ -18,7 +20,7 @@ var config = {
 
     dbHost: 'localhost',
     dbPort: 3306,
-    dbName: 'imgsk',
+    dbName: 'mushroom',
     dbUser: 'root',
     dbPassword: '',
     dbMaxConn: 5,
