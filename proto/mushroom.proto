@@ -8,9 +8,21 @@ message MessageHeader {
 
 enum MessageId {
     HeartbeatReq = 1;
+    HeartbeatRsp = 2;
+    LoginReq     = 3;
+    LoginRsp     = 4;
 }
 
 message HeartbeatReq {
+}
+
+message HeartbeatRsp {
+}
+
+message LoginReq {
+}
+
+message LoginRsp {
 }
 
 // enum msg_id {
