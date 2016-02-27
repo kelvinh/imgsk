@@ -1,4 +1,5 @@
 node_modules/
 uploads/
+logs/
 .tern-port
 .tern-project
