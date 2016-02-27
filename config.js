@@ -8,6 +8,7 @@ var config = {
     port: 8080,
 
     connectTimeout: 5000, // 5 sec
+    heartbeatTimeout: 60000, // 60 sec
 
 
     // below fields are obsolete
