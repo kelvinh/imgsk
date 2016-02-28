@@ -2,8 +2,7 @@
 
 var net = require('net');
 var protobuf = require('protobufjs');
-var mushroom = protobuf.loadProtoFile('../proto/mushroom.proto');
-var root = mushroom.build('mushroom');
+var proto = require('../lib/proto');
 
 var host = 'localhost';
 var port = 8080;
@@ -22,31 +21,96 @@ function parseArgs() {
         port = args[1];
 }
 
-function encodeMessage(msgid, msg) {
-    var msgBuf = msg.toBuffer();
+function processMessage(header, body) {
+    switch (header.msgId) {
+    case proto.messages.MessageId.LoginRsp:
+        console.log('login response:', body);
+        break;
+    // TODO: add other cases here
+    default:
+        console.log('unknown msgid:', header.msgId);
+    }
+}
 
-    var header = new root.MessageHeader();
-    header.setMsgId(msgid).setBodyLength(msgBuf.length);
+function handleData(conn, data) {
+    if (conn.msgBuffer)
+        conn.msgBuffer = Buffer.concat([conn.msgBuffer, data]);
+    else
+        conn.msgBuffer = data;
 
-    var headerBuf = header.toBuffer();
+    while (true) {
+        // header has not been extracted
+        if (!conn.msgHeader) {
+            var headerLength = conn.msgBuffer[0];
 
-    var prefixBuf = new Buffer(1);
-    prefixBuf.writeUInt8(headerBuf.length);
+            // received data length is less than the header length, continue
+            if (conn.msgBuffer.length < headerLength + 1) {
+                console.log('INCOMPLETE HEADER');
+                return;
+            }
 
-    return Buffer.concat([prefixBuf, headerBuf, msgBuf]);
+            var rawHeader = conn.msgBuffer.slice(1, 1 + headerLength);
+            conn.msgHeader = proto.readMessageHeader(rawHeader);
+            if (!conn.msgHeader)
+                // TODO: error handling
+                return;
+
+            // if there is no content left in buffer
+            if (conn.msgBuffer.length - headerLength - 1 <= 0) {
+                if (conn.msgHeader.bodyLength > 0) {
+                    conn.msgBuffer = undefined;
+                    return;
+                }
+            }
+
+            conn.msgBuffer = conn.msgBuffer.slice(1 + headerLength);
+        }
+
+        // body has not been extracted
+        if (!conn.msgBody) {
+            var bodyLength = conn.msgHeader.bodyLength;
+            if (conn.msgBuffer.length < bodyLength) {
+                console.log('INCOMPLETE BODY');
+                return;
+            }
+
+            var rawBody = conn.msgBuffer.slice(0, bodyLength);
+            conn.msgBody = proto.readMessageBody(conn.msgHeader.msgId, rawBody);
+            if (!conn.msgBody)
+                // TODO: error handling
+                return;
+
+            // if there is no content left in buffer
+            if (conn.msgBuffer.length - bodyLength <= 0)
+                conn.msgBuffer = undefined;
+            else
+                conn.msgBuffer = conn.msgBuffer.slice(bodyLength);
+        }
+
+        processMessage(conn.msgHeader, conn.msgBody);
+
+        conn.msgHeader = undefined;
+        conn.msgBody = undefined;
+
+        if (!conn.msgBuffer)
+            break;
+    }
 }
 
 function start() {
     parseArgs();
+    proto.init();
 
     var client = new net.Socket();
+    var conn = {};
 
     client.connect(port, host, function() {
         console.log('CONNECTED: ' + host + ':' + port);
 
-        var login = new root.LoginReq();
+        var login = new proto.messages.LoginReq();
         login.setEmail('i@a.com');
-        var buf = encodeMessage(root.MessageId.LoginReq, login);
+        login.setPassword('123');
+        var buf = proto.encodeMessage(proto.messages.MessageId.LoginReq, login);
 
         client.write(buf);
     });
@@ -66,8 +130,8 @@ function start() {
     });
 
     client.on('data', function(data) {
-        console.log('DATA: ' + data);
-        client.destroy();
+        console.log('DATA: ', data);
+        handleData(conn, data);
     });
 
     client.on('close', function() {
