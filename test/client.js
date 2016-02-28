@@ -135,6 +135,7 @@ function start() {
         var login = new proto.messages.LoginReq();
         login.setEmail('i@a.com');
         login.setPassword('123');
+        login.setDeviceId('iphone');
         var buf = proto.encodeMessage(proto.messages.MessageId.LoginReq, login);
 
         client.write(buf);

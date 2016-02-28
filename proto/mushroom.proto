@@ -14,9 +14,10 @@ enum MessageId {
 }
 
 enum ErrorCode {
-    Ok = 0;
-    UserNotFound = 1;
-    IncorrectPassword = 2;
+    Ok                = 0;
+    DatabaseError     = 1;
+    UserNotFound      = 2;
+    IncorrectPassword = 3;
 }
 
 message HeartbeatReq {
@@ -28,6 +29,7 @@ message HeartbeatRsp {
 message LoginReq {
     optional string email    = 1;
     optional string password = 2;
+    optional string deviceId = 3;
 }
 
 message LoginRsp {
