@@ -18,7 +18,7 @@ var UserImage = db.define('user_image', {
 
 User.belongsToMany(Image, {
     through: UserImage,
-    foreignKey: 'user_id'
+    foreignKey: 'user_email'
 });
 
 Image.belongsToMany(User, {
