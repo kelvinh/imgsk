@@ -13,6 +13,12 @@ enum MessageId {
     LoginRsp     = 4;
 }
 
+enum ErrorCode {
+    Ok = 0;
+    UserNotFound = 1;
+    IncorrectPassword = 2;
+}
+
 message HeartbeatReq {
 }
 
@@ -20,10 +26,13 @@ message HeartbeatRsp {
 }
 
 message LoginReq {
-    optional string email = 1;
+    optional string email    = 1;
+    optional string password = 2;
 }
 
 message LoginRsp {
+    optional int32 ret   = 1;
+    optional string name = 2;
 }
 
 // enum msg_id {
