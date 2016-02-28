@@ -21,10 +21,26 @@ function parseArgs() {
         port = args[1];
 }
 
-function processMessage(header, body) {
+function processLoginRsp(socket, header, rsp) {
+    if (rsp.ret != proto.messages.ErrorCode.Ok) {
+        console.log('login failed, error code: ', rsp.ret);
+        return;
+    }
+
+    console.log('welcome user: ', rsp.name);
+
+    setTimeout(function(socket) {
+        console.log('send heartbeat');
+        var heartbeat = new proto.messages.HeartbeatReq();
+        var buf = proto.encodeMessage(proto.messages.MessageId.HeartbeatReq, heartbeat);
+        socket.write(buf);
+    }, 30000, socket);
+}
+
+function processMessage(socket, header, body) {
     switch (header.msgId) {
     case proto.messages.MessageId.LoginRsp:
-        console.log('login response:', body);
+        processLoginRsp(socket, header, body);
         break;
     // TODO: add other cases here
     default:
@@ -32,7 +48,7 @@ function processMessage(header, body) {
     }
 }
 
-function handleData(conn, data) {
+function handleData(socket, conn, data) {
     if (conn.msgBuffer)
         conn.msgBuffer = Buffer.concat([conn.msgBuffer, data]);
     else
@@ -87,7 +103,7 @@ function handleData(conn, data) {
                 conn.msgBuffer = conn.msgBuffer.slice(bodyLength);
         }
 
-        processMessage(conn.msgHeader, conn.msgBody);
+        processMessage(socket, conn.msgHeader, conn.msgBody);
 
         conn.msgHeader = undefined;
         conn.msgBody = undefined;
@@ -131,7 +147,7 @@ function start() {
 
     client.on('data', function(data) {
         console.log('DATA: ', data);
-        handleData(conn, data);
+        handleData(client, conn, data);
     });
 
     client.on('close', function() {
