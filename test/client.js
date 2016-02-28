@@ -29,7 +29,7 @@ function processLoginRsp(socket, header, rsp) {
 
     console.log('welcome user: ', rsp.name);
 
-    setTimeout(function(socket) {
+    setInterval(function(socket) {
         console.log('send heartbeat');
         var heartbeat = new proto.messages.HeartbeatReq();
         var buf = proto.encodeMessage(proto.messages.MessageId.HeartbeatReq, heartbeat);
