@@ -12,12 +12,6 @@ var config = {
     connectTimeout: 5000, // 5 sec
     heartbeatTimeout: 60000, // 60 sec
 
-
-    // below fields are obsolete
-
-    imageUploadDir: './uploads/',
-    sessionSecret: 'sillykelvin',
-
     dbHost: 'localhost',
     dbPort: 3306,
     dbName: 'mushroom',
@@ -25,6 +19,12 @@ var config = {
     dbPassword: '',
     dbMaxConn: 5,
     dbMaxIdleTime: 10000,
+
+
+    // below fields are obsolete
+
+    imageUploadDir: './uploads/',
+    sessionSecret: 'sillykelvin',
 
     qqAuthEnabled: false,
     qqAppKey: '',
