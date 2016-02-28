@@ -7,6 +7,8 @@ var log = require('./lib/logger');
 var User = require('./models/user');
 var Image = require('./models/image');
 var UserImage = require('./models/user-image');
+var Device = require('./models/device');
+var UserDevice = require('./models/user-device');
 
 if (config.debug) {
     log.info('recreating tables...');
