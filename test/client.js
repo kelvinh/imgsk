@@ -23,11 +23,11 @@ function parseArgs() {
 
 function processLoginRsp(conn, header, rsp) {
     if (rsp.ret != proto.messages.ErrorCode.Ok) {
-        console.log('login failed, error code: ', rsp.ret);
+        console.log('login failed, error code:', rsp.ret);
         return;
     }
 
-    console.log('welcome user: ', rsp.name);
+    console.log('welcome user:', rsp.name);
 
     conn.heartbeatTimer = setInterval(function(socket) {
         console.log('send heartbeat');
