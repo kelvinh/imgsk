@@ -16,11 +16,40 @@ if (config.debug) {
         force: true
     }).then(function() {
         log.info('tables recreated.');
-        return User.create({
+
+        var user = User.build({
             name: 'kelvin',
             email: 'i@a.com',
             password: '123'
         });
+        user.save().then(function() {
+            log.info('user', user.name, 'saved.');
+        }).catch(function(err) {
+            log.error('failed to save user', user.name);
+        });
+
+        var device = Device.build({
+            id: 'android'
+        });
+        device.save().then(function() {
+            log.info('device', device.id, 'saved.');
+        }).catch(function(err) {
+            log.error('failed to save device', device.id);
+        });
+
+        user.addDevice(device);
+
+        var image = Image.build({
+            md5: 'abcdefg',
+            path: 'upload/test.jpg'
+        });
+        image.save().then(function() {
+            log.info('image', image.path, 'saved.');
+        }).catch(function(err) {
+            log.error('failed to save image', image.path);
+        });
+
+        user.addImage(image);
     }).catch(function(err) {
         log.error('table recreation error: ', err);
     });

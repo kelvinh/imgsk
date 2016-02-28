@@ -5,16 +5,7 @@ var sequelize = require('sequelize');
 var User = require('./user');
 var Device = require('./device');
 
-var UserDevice = db.define('user_device', {
-    id: {
-        type: sequelize.INTEGER,
-        unique: true,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        field: 'id'
-    }
-});
+var UserDevice = db.define('user_device', {});
 
 User.belongsToMany(Device, {
     through: UserDevice,
