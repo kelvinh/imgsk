@@ -21,7 +21,7 @@ function parseArgs() {
         port = args[1];
 }
 
-function processLoginRsp(socket, header, rsp) {
+function processLoginRsp(conn, header, rsp) {
     if (rsp.ret != proto.messages.ErrorCode.Ok) {
         console.log('login failed, error code: ', rsp.ret);
         return;
@@ -29,18 +29,21 @@ function processLoginRsp(socket, header, rsp) {
 
     console.log('welcome user: ', rsp.name);
 
-    setInterval(function(socket) {
+    conn.heartbeatTimer = setInterval(function(socket) {
         console.log('send heartbeat');
         var heartbeat = new proto.messages.HeartbeatReq();
         var buf = proto.encodeMessage(proto.messages.MessageId.HeartbeatReq, heartbeat);
         socket.write(buf);
-    }, 30000, socket);
+    }, 30000, conn.socket);
 }
 
-function processMessage(socket, header, body) {
+function processMessage(conn, header, body) {
     switch (header.msgId) {
     case proto.messages.MessageId.LoginRsp:
-        processLoginRsp(socket, header, body);
+        processLoginRsp(conn, header, body);
+        break;
+    case proto.messages.MessageId.HeartbeatRsp:
+        console.log('heartbeat rsp');
         break;
     // TODO: add other cases here
     default:
@@ -48,7 +51,7 @@ function processMessage(socket, header, body) {
     }
 }
 
-function handleData(socket, conn, data) {
+function handleData(conn, data) {
     if (conn.msgBuffer)
         conn.msgBuffer = Buffer.concat([conn.msgBuffer, data]);
     else
@@ -103,7 +106,7 @@ function handleData(socket, conn, data) {
                 conn.msgBuffer = conn.msgBuffer.slice(bodyLength);
         }
 
-        processMessage(socket, conn.msgHeader, conn.msgBody);
+        processMessage(conn, conn.msgHeader, conn.msgBody);
 
         conn.msgHeader = undefined;
         conn.msgBody = undefined;
@@ -113,12 +116,18 @@ function handleData(socket, conn, data) {
     }
 }
 
+function cleanup(conn) {
+    if (conn.heartbeatTimer)
+        clearInterval(conn.heartbeatTimer);
+}
+
 function start() {
     parseArgs();
     proto.init();
 
     var client = new net.Socket();
     var conn = {};
+    conn.socket = client;
 
     client.connect(port, host, function() {
         console.log('CONNECTED: ' + host + ':' + port);
@@ -147,11 +156,12 @@ function start() {
 
     client.on('data', function(data) {
         console.log('DATA: ', data);
-        handleData(client, conn, data);
+        handleData(conn, data);
     });
 
     client.on('close', function() {
         console.log('Connection closed.');
+        cleanup(conn);
     });
 }
 
