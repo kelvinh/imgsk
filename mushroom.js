@@ -6,8 +6,9 @@ var db = require('./lib/db');
 var log = require('./lib/logger');
 var User = require('./models/user');
 var Image = require('./models/image');
-var UserImage = require('./models/user-image');
 var Device = require('./models/device');
+var Share = require('./models/share');
+var UserImage = require('./models/user-image');
 var UserDevice = require('./models/user-device');
 
 if (config.debug) {
@@ -50,6 +51,20 @@ if (config.debug) {
         });
 
         user.addImage(image);
+
+        var share = Share.build({
+            startTime: new Date(),
+            scope: 1
+        });
+
+        share.setUser(user);
+        share.setDevice(device);
+        share.setImage(image);
+        share.save().then(function() {
+            log.info('share', share.id, 'saved.');
+        }).catch(function(err) {
+            log.error(err);
+        });
     }).catch(function(err) {
         log.error('table recreation error: ', err);
     });
