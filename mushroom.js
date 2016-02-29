@@ -14,7 +14,8 @@ var UserDevice = require('./models/user-device');
 if (config.debug) {
     log.info('recreating tables...');
     db.sync({
-        force: true
+        force: true,
+        logging: log.debug
     }).then(function() {
         log.info('tables recreated.');
 
