@@ -29,42 +29,48 @@ var Share = db.define('share', {
 
 User.hasMany(Share, {
     foreignKey: {
-        name: 'user_email',
+        name: 'userEmail',
+        field: 'user_email',
         allowNull: false
     }
 });
 
 Device.hasMany(Share, {
     foreignKey: {
-        name: 'device_id',
+        name: 'deviceId',
+        field: 'device_id',
         allowNull: false
     }
 });
 
 Image.hasMany(Share, {
     foreignKey: {
-        name: 'image_md5',
+        name: 'imageMd5',
+        field: 'image_md5',
         allowNull: false
     }
 });
 
 Share.belongsTo(User, {
     foreignKey: {
-        name: 'user_email',
+        name: 'userEmail',
+        field: 'user_email',
         allowNull: false
     }
 });
 
 Share.belongsTo(Device, {
     foreignKey: {
-        name: 'device_id',
+        name: 'deviceId',
+        field: 'device_id',
         allowNull: false
     }
 });
 
 Share.belongsTo(Image, {
     foreignKey: {
-        name: 'image_md5',
+        name: 'imageMd5',
+        field: 'image_md5',
         allowNull: false
     }
 });

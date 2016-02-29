@@ -54,12 +54,12 @@ if (config.debug) {
 
         var share = Share.build({
             startTime: new Date(),
-            scope: 1
+            scope: 1,
+            userEmail: user.email,
+            deviceId: device.id,
+            imageMd5: image.md5
         });
 
-        share.setUser(user);
-        share.setDevice(device);
-        share.setImage(image);
         share.save().then(function() {
             log.info('share', share.id, 'saved.');
         }).catch(function(err) {
