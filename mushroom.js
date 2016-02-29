@@ -64,7 +64,7 @@ if (config.debug) {
         share.save().then(function() {
             log.info('share', share.id, 'saved.');
         }).catch(function(err) {
-            log.error(err);
+            log.error('failed to save share', err);
         });
     }).catch(function(err) {
         log.error('table recreation error: ', err);
