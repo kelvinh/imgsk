@@ -1,5 +1,6 @@
 // client.js
 
+var fs = require('fs');
 var net = require('net');
 var protobuf = require('protobufjs');
 var proto = require('../lib/proto');
@@ -45,7 +46,26 @@ function processMessage(conn, header, body) {
     case proto.messages.MessageId.HeartbeatRsp:
         console.log('heartbeat rsp');
         break;
-    // TODO: add other cases here
+    case proto.messages.MessageId.ShareImageRsp:
+        console.log('share result:', body.ret, ', id:', body.shareId);
+        break;
+    case proto.messages.MessageId.FetchImageRsp:
+        console.log('fetch result:', body.ret);
+        if (body.ret == 0) {
+            fs.writeFile('./' + body.name, body.image, function(err) {
+                if (err)
+                    throw err;
+
+                console.log('image', body.name, 'saved.');
+            });
+        }
+        break;
+    case proto.messages.MessageId.ShareImageNotify:
+        console.log('image', body.imageName, 'shared by:', body.userName);
+        break;
+    case proto.messages.MessageId.KickNotify:
+        console.log('kicked, reason:', body.reason);
+        break;
     default:
         console.log('unknown msgid:', header.msgId);
     }
