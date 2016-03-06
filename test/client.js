@@ -2,6 +2,7 @@
 
 var fs = require('fs');
 var net = require('net');
+var path = require('path');
 var protobuf = require('protobufjs');
 var proto = require('../lib/proto');
 
@@ -36,6 +37,20 @@ function processLoginRsp(conn, header, rsp) {
         var buf = proto.encodeMessage(proto.messages.MessageId.HeartbeatReq, heartbeat);
         socket.write(buf);
     }, 30000, conn.socket);
+
+    shareImage(conn, './test.jpg');
+}
+
+function processFetchImageRsp(conn, header, rsp) {
+    console.log('fetch result:', rsp.ret);
+    if (rsp.ret == 0) {
+        fs.writeFile('./downloads/' + rsp.name, rsp.image.toBuffer(), function(err) {
+            if (err)
+                throw err;
+
+            console.log('image', rsp.name, 'saved.');
+        });
+    }
 }
 
 function processMessage(conn, header, body) {
@@ -48,17 +63,11 @@ function processMessage(conn, header, body) {
         break;
     case proto.messages.MessageId.ShareImageRsp:
         console.log('share result:', body.ret, ', id:', body.shareId);
+        if (body.ret == 0)
+            fetchImage(conn, body.shareId);
         break;
     case proto.messages.MessageId.FetchImageRsp:
-        console.log('fetch result:', body.ret);
-        if (body.ret == 0) {
-            fs.writeFile('./' + body.name, body.image, function(err) {
-                if (err)
-                    throw err;
-
-                console.log('image', body.name, 'saved.');
-            });
-        }
+        processFetchImageRsp(conn, header, body);
         break;
     case proto.messages.MessageId.ShareImageNotify:
         console.log('image', body.imageName, 'shared by:', body.userName);
@@ -69,6 +78,27 @@ function processMessage(conn, header, body) {
     default:
         console.log('unknown msgid:', header.msgId);
     }
+}
+
+function shareImage(conn, imagePath) {
+    var filename = path.basename(imagePath);
+    var content = fs.readFileSync(imagePath);
+
+    var req = new proto.messages.ShareImageReq();
+    req.setName(filename);
+    req.setImage(content);
+    req.setScope(proto.messages.ShareImageReq.ShareScope.User);
+
+    var buf = proto.encodeMessage(proto.messages.MessageId.ShareImageReq, req);
+    conn.socket.write(buf);
+}
+
+function fetchImage(conn, shareId) {
+    var req = new proto.messages.FetchImageReq();
+    req.setShareId(shareId);
+
+    var buf = proto.encodeMessage(proto.messages.MessageId.FetchImageReq, req);
+    conn.socket.write(buf);
 }
 
 function handleData(conn, data) {
@@ -176,7 +206,6 @@ function start() {
     });
 
     client.on('data', function(data) {
-        console.log('DATA: ', data);
         handleData(conn, data);
     });
 
