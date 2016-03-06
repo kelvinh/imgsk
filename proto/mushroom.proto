@@ -7,10 +7,12 @@ message MessageHeader {
 }
 
 enum MessageId {
-    HeartbeatReq = 1;
-    HeartbeatRsp = 2;
-    LoginReq     = 3;
-    LoginRsp     = 4;
+    HeartbeatReq  = 1;
+    HeartbeatRsp  = 2;
+    LoginReq      = 3;
+    LoginRsp      = 4;
+    ShareImageReq = 5;
+    ShareImageRsp = 6;
 }
 
 enum ErrorCode {
@@ -37,21 +39,19 @@ message LoginRsp {
     optional string name = 2;
 }
 
-// enum msg_id {
-//     UPLOAD_IMAGE_REQ = 1;
-//     UPLOAD_IMAGE_RSP = 2;
-// }
-// 
-// message upload_image_req {
-//     optional string name  = 1;
-//     optional byte content = 2;
-// }
-// 
-// message upload_image_rsp {
-//     optional sint32 ret = 1;
-// }
-// 
-// message msg {
-//     optional msg_id msgid = 1;
-//     optional byte payload = 2;
-// }
+message ShareImageReq {
+    enum ShareScope {
+        Private = 1; // only this device can see
+        User    = 2; // only share among the same user's devices
+        Public  = 3; // share to the public
+    }
+
+    optional string name      = 1;
+    optional bytes image      = 2;
+    optional ShareScope scope = 3;
+}
+
+message ShareImageRsp {
+    optional int32 ret     = 1;
+    optional int32 shareId = 2;
+}

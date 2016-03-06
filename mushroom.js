@@ -4,11 +4,11 @@ var config = require('./config');
 var server = require('./lib/server');
 var db = require('./lib/db');
 var log = require('./lib/logger');
+var scope = require('./lib/scope');
 var User = require('./models/user');
 var Image = require('./models/image');
 var Device = require('./models/device');
 var Share = require('./models/share');
-var UserImage = require('./models/user-image');
 var UserDevice = require('./models/user-device');
 
 if (config.debug) {
@@ -51,11 +51,9 @@ if (config.debug) {
             log.error('failed to save image', image.path);
         });
 
-        user.addImage(image);
-
         var share = Share.build({
             startTime: new Date(),
-            scope: 1,
+            scope: scope.Private,
             userEmail: user.email,
             deviceId: device.id,
             imageMd5: image.md5
