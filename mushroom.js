@@ -4,7 +4,6 @@ var config = require('./config');
 var server = require('./lib/server');
 var db = require('./lib/db');
 var log = require('./lib/logger');
-var scope = require('./lib/scope');
 var User = require('./models/user');
 var Image = require('./models/image');
 var Device = require('./models/device');
@@ -43,6 +42,7 @@ if (config.debug) {
 
         var image = Image.build({
             md5: 'abcdefg',
+            name: 'test.jpg',
             path: 'upload/test.jpg'
         });
         image.save().then(function() {
@@ -53,7 +53,7 @@ if (config.debug) {
 
         var share = Share.build({
             startTime: new Date(),
-            scope: scope.Private,
+            scope: 1,
             userEmail: user.email,
             deviceId: device.id,
             imageMd5: image.md5
