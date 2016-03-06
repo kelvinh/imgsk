@@ -20,10 +20,11 @@ var config = {
     dbMaxConn: 5,
     dbMaxIdleTime: 10000,
 
+    storeDir: './uploads',
+
 
     // below fields are obsolete
 
-    imageUploadDir: './uploads/',
     sessionSecret: 'sillykelvin',
 
     qqAuthEnabled: false,

@@ -24,6 +24,9 @@ enum ErrorCode {
     DatabaseError     = 1;
     UserNotFound      = 2;
     IncorrectPassword = 3;
+    StorageError      = 4;
+    ShareNotFound     = 5;
+    PermissionDenied  = 6;
 }
 
 message HeartbeatReq {

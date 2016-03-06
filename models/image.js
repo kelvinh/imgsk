@@ -11,6 +11,11 @@ var Image = db.define('image', {
         allowNull: false,
         field: 'md5'
     },
+    name: {
+        type: sequelize.STRING,
+        allowNull: false,
+        field: 'name'
+    },
     path: {
         type: sequelize.STRING,
         allowNull: false,
