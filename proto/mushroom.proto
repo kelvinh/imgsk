@@ -7,12 +7,16 @@ message MessageHeader {
 }
 
 enum MessageId {
-    HeartbeatReq  = 1;
-    HeartbeatRsp  = 2;
-    LoginReq      = 3;
-    LoginRsp      = 4;
-    ShareImageReq = 5;
-    ShareImageRsp = 6;
+    HeartbeatReq     = 1;
+    HeartbeatRsp     = 2;
+    LoginReq         = 3;
+    LoginRsp         = 4;
+    ShareImageReq    = 5;
+    ShareImageRsp    = 6;
+    ShareImageNotify = 7;
+    FetchImageReq    = 8;
+    FetchImageRsp    = 9;
+    KickNotify       = 10;
 }
 
 enum ErrorCode {
@@ -46,7 +50,7 @@ message ShareImageReq {
         Public  = 3; // share to the public
     }
 
-    optional string name      = 1;
+    optional string name      = 1; // image name
     optional bytes image      = 2;
     optional ShareScope scope = 3;
 }
@@ -54,4 +58,29 @@ message ShareImageReq {
 message ShareImageRsp {
     optional int32 ret     = 1;
     optional int32 shareId = 2;
+}
+
+message ShareImageNotify {
+    optional int32 shareId    = 1;
+    optional string userName  = 2;
+    optional string imageName = 3;
+}
+
+message FetchImageReq {
+    optional int32 shareId = 1;
+}
+
+message FetchImageRsp {
+    optional int32 ret   = 1;
+    optional string name = 2; // image name
+    optional bytes image = 3;
+}
+
+message KickNotify {
+    enum Reason {
+        Relogin = 1; // re-login with same account & device
+        Timeout = 2; // long time no heartbeat or no login request
+    }
+
+    optional Reason reason = 1;
 }
