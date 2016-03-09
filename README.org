@@ -1,7 +1,7 @@
-#+TITLE:     imgsk - an image hosting site
+#+TITLE:     mushroom - an image sharing service
 #+AUTHOR:    Kelvin Hu
 #+EMAIL:     ini.kelvin@gmail.com
 #+DATE:      2015-09-11
 
 
-An image hosting site.
+An image sharing service.
